@@ -6,6 +6,14 @@
   "repository": "https://github.com/keyz/alfred-prettier",
   "author": "Keyan Zhang <root@keyanzhang.com>",
   "license": "MIT",
+  "keywords": [
+    "Alfred",
+    "alfy",
+    "Flow",
+    "Powerpack",
+    "Prettier",
+    "workflow"
+  ],
   "dependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-flow": "^7.0.0",
