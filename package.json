@@ -1,0 +1,24 @@
+{
+  "name": "alfred-prettier",
+  "version": "0.1.0",
+  "description": "Run Prettier in Alfred",
+  "main": "index.js",
+  "repository": "https://github.com/keyz/alfred-prettier",
+  "author": "Keyan Zhang <root@keyanzhang.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-flow": "^7.0.0",
+    "alfy": "^0.8.0",
+    "prettier": "^1.16.4"
+  },
+  "scripts": {
+    "postinstall": "alfy-init",
+    "preuninstall": "alfy-cleanup",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "alfy-test": "^0.3.0",
+    "jest": "^24.1.0"
+  }
+}
