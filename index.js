@@ -12,36 +12,66 @@ const prettierConfig = {
   trailingComma: 'all',
 };
 
-const babelConfig = {
-  envName: 'production',
-  generatorOpts: {
-    comments: true,
-    compact: false,
-    retainFunctionParens: true,
-    retainLines: true,
-  },
-  inputSourceMap: false,
-  presets: ['@babel/preset-flow'],
-};
+function getBabelConfig(plugins) {
+  return {
+    envName: 'production',
+    generatorOpts: {
+      comments: true,
+      compact: false,
+      retainFunctionParens: true,
+      retainLines: true,
+    },
+    inputSourceMap: false,
+    plugins,
+  };
+}
 
 function main() {
   const input = alfy.input;
   let flowStrippedRaw = '';
+  let flowCommentedRaw = '';
+
+  let prettierOutput = '';
 
   try {
-    flowStrippedRaw = babelCore.transform(input, babelConfig).code;
+    prettierOutput = prettier.format(input, prettierConfig);
+  } catch (prettierError) {
+    alfy.error(String(prettierError));
+    return;
+  }
+
+  try {
+    flowStrippedRaw = babelCore.transform(
+      prettierOutput,
+      getBabelConfig(['@babel/plugin-transform-flow-strip-types']),
+    ).code;
   } catch (babelError) {
     alfy.error(String(babelError));
     return;
   }
 
-  let prettierOutput = '';
+  try {
+    // Run Babel over the Prettier output, such that comments will look nicer
+    flowCommentedRaw = babelCore.transform(
+      prettierOutput,
+      getBabelConfig(['@babel/plugin-transform-flow-comments']),
+    ).code;
+  } catch (babelError) {
+    alfy.error(String(babelError));
+    return;
+  }
+
   let prettierFlowStrippedOutput = '';
+  let prettierFlowCommentedOutput = '';
 
   try {
-    prettierOutput = prettier.format(input, prettierConfig);
+    // Run Prettier again over the Babel output
     prettierFlowStrippedOutput = prettier.format(
       flowStrippedRaw,
+      prettierConfig,
+    );
+    prettierFlowCommentedOutput = prettier.format(
+      flowCommentedRaw,
       prettierConfig,
     );
   } catch (prettierError) {
@@ -64,12 +94,24 @@ function main() {
       icon: {
         path: 'flow-logo.png',
       },
-      subtitle: `Flow stripped & Prettified "${input}"`,
+      subtitle: `Flow stripped & prettified "${input}"`,
       text: {
         copy: prettierFlowStrippedOutput,
         largetype: prettierFlowStrippedOutput,
       },
       title: prettierFlowStrippedOutput,
+    },
+    {
+      arg: prettierFlowCommentedOutput,
+      icon: {
+        path: 'flow-logo.png',
+      },
+      subtitle: `Flow commented & prettified "${input}"`,
+      text: {
+        copy: prettierFlowCommentedOutput,
+        largetype: prettierFlowCommentedOutput,
+      },
+      title: prettierFlowCommentedOutput,
     },
   ]);
 }
