@@ -1,3 +1,5 @@
+'use strict';
+
 const alfy = require('alfy');
 const babelCore = require('@babel/core');
 const prettier = require('prettier');
@@ -5,7 +7,7 @@ const prettier = require('prettier');
 const prettierConfig = {
   bracketSpacing: false,
   jsxBracketSameLine: true,
-  parser: 'babel',
+  parser: 'babel-flow',
   printWidth: 80,
   semi: true,
   singleQuote: true,
@@ -14,6 +16,7 @@ const prettierConfig = {
 
 function getBabelConfig(plugins) {
   return {
+    plugins,
     envName: 'production',
     generatorOpts: {
       comments: true,
@@ -22,7 +25,32 @@ function getBabelConfig(plugins) {
       retainLines: true,
     },
     inputSourceMap: false,
-    plugins,
+    parserOpts: {
+      plugins: [
+        ['flow', {all: true}],
+        'jsx',
+        'asyncGenerators',
+        'bigInt',
+        'classProperties',
+        'classPrivateProperties',
+        'classPrivateMethods',
+        ['decorators', {decoratorsBeforeExport: false}],
+        'doExpressions',
+        'dynamicImport',
+        'exportDefaultFrom',
+        'exportNamespaceFrom',
+        'functionBind',
+        'importMeta',
+        'logicalAssignment',
+        'nullishCoalescingOperator',
+        'numericSeparator',
+        'objectRestSpread',
+        'optionalCatchBinding',
+        'optionalChaining',
+        ['pipelineOperator', {proposal: 'minimal'}],
+        'throwExpressions',
+      ],
+    },
   };
 }
 
