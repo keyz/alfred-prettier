@@ -4,6 +4,13 @@ const alfy = require('alfy');
 const babelCore = require('@babel/core');
 const prettier = require('prettier');
 
+let userPrettierConfig;
+try {
+  userPrettierConfig = JSON.parse(process.env.prettierConfig);
+} catch (e) {
+  userPrettierConfig = {};
+}
+
 const prettierConfig = {
   bracketSpacing: false,
   jsxBracketSameLine: true,
@@ -12,6 +19,7 @@ const prettierConfig = {
   semi: true,
   singleQuote: true,
   trailingComma: 'all',
+  ...userPrettierConfig
 };
 
 function getBabelConfig(plugins) {
